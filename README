@@ -1,0 +1,7 @@
+If you do a bit of web development you'll no doubt know you can use the mailto attribute 
+in a hyperlink to bring up the e-mail client installed on the user's computer (if there is one).
+
+This is great if you use Outlook or Thunderbird, but what if your e-mail is web based like Gmail 
+or Hotmail? Yup, you're a bit stumped. This is where manyMail comes in; it provides an 
+interactive user interface for sending e-mails from your website.
+
