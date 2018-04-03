@@ -23,13 +23,13 @@
 			showHelp: true,
 			showClient: true,
 			showReset: true,
-			validate: function(email) { 
-				return defaultValidator(email); 
+			validate: function (email) {
+				return defaultValidator(email);
 			},
-			loadAddresses: function(email) {
+			loadAddresses: function (email) {
 				// By default we don't do anything
 			},
-			decode: function(emailAddress) {
+			decode: function (emailAddress) {
 				// no encoding by default, just return what we've been given
 				return emailAddress;
 			},
@@ -37,7 +37,7 @@
 				// By default we don't display a confirmation 
 				return true;
 			},
-			send: function(email) {
+			send: function (email) {
 				// Caller must override the "send" method, so give a 
 				// reminder if they haven't
 				alert("override settings.send method to send the e-mail \n(you would be sending to [" + email.To + "])");
@@ -45,16 +45,16 @@
 				return;
 			}
 		}, settings);
-		
 
-		this.each(function() {
+
+		this.each(function () {
 			var alink = jQuery(this);
 			var email = buildDefaultObject();
 			email.settings = settings;
 			email.startingEmail = email;
-			
+
 			getDataFromLink(email, alink);
-			
+
 			if (email.settings.loadAddresses) {
 				// caller wants to add their own stuff in
 				email.settings.loadAddresses(email);
@@ -74,11 +74,11 @@
 
 			// wire up the onclick to open the dialog
 			alink.click(
-				function() { 
+				function () {
 					// make sure we have the lists up-to-date
 					buildEmailLists(email);
 					wireUpDragNDrop(email);
-					showDialog(email);					
+					showDialog(email);
 
 					// prevent click through
 					return false;
@@ -90,12 +90,12 @@
 
 		function showDialog(email) {
 			var dlgButtons = {};
-			if (email.settings.showHelp)		dlgButtons["Help"] = function() { showHelpDialog(); };
-			if (email.settings.showClient)	dlgButtons["Outlook"] = function() { getDataFromDialog(email); openInClientApp(email); }
-			if (email.settings.showReset)		dlgButtons["Reset"] = function() { resetDialog(email.startingEmail); }
-			
+			if (email.settings.showHelp) dlgButtons["Help"] = function () { showHelpDialog(); };
+			if (email.settings.showClient) dlgButtons["Outlook"] = function () { getDataFromDialog(email); openInClientApp(email); }
+			if (email.settings.showReset) dlgButtons["Reset"] = function () { resetDialog(email.startingEmail); }
+
 			// Send is always present otherwise there's just no point
-			dlgButtons["Send"] = function() {
+			dlgButtons["Send"] = function () {
 				getDataFromDialog(email);
 				var errMsg = email.settings.validate(email);
 				if (errMsg && errMsg.length > 0) {
@@ -103,13 +103,13 @@
 					showError(email, errMsg);
 				} else {
 					if (email.settings.confirmation(email)) {
-						email.settings.send(email);	
-						$( this ).dialog( "close" );
+						email.settings.send(email);
+						$(this).dialog("close");
 					}
 				}
 			}; // button send
 
-			$("#" + email.ID).dialog( 
+			$("#" + email.ID).dialog(
 				{
 					modal: email.settings.modal,
 					width: email.settings.width,
@@ -123,26 +123,26 @@
 
 		function wireUpDragNDrop(email) {
 			var prefix = "#" + email.ID;
-			var sortableIDs = "#" + email.ToListID  + ", #" + email.CcListID + ", #" + email.BccListID;
+			var sortableIDs = "#" + email.ToListID + ", #" + email.CcListID + ", #" + email.BccListID;
 
 			$(sortableIDs).sortable().disableSelection();
 			// enable tabs
-			var $tabs = $( "#" + email.TabsID ).tabs();
+			var $tabs = $("#" + email.TabsID).tabs();
 
 			var $tabItems = $("ul li", $tabs).droppable(
 				{
-					accept: ".connectedSortable li", 
+					accept: ".connectedSortable li",
 					hoverClass: "ui-state-hover",
-					drop: function( event, ui ) {
+					drop: function (event, ui) {
 						var $item = $(this);
-						var $list = $( $item.find("a").attr("href") )
-							.find( ".connectedSortable" );
+						var $list = $($item.find("a").attr("href"))
+							.find(".connectedSortable");
 
 						// if we don't find a list, user must be adding item onto another item in the same list
 						if ($list.length > 0) {
-							ui.draggable.hide( "fast", 
-								function() {
-									$tabs.tabs("select", $tabItems.index( $item ));
+							ui.draggable.hide("fast",
+								function () {
+									$tabs.tabs("option", "active", $tabItems.index($item));
 									$(this).appendTo($list).show("fast");
 								}
 							);
@@ -169,28 +169,28 @@
 					height: 450,
 					title: "Help",
 					buttons: {
-						Ok: function() { $(this).dialog("close"); }
+						Ok: function () { $(this).dialog("close"); }
 					}
 				}
 			);
 
 		}; // showHelpDialog
-		
-		
+
+
 		function buildHelpDialog() {
 			var html = "";
 
 			html += '<div id="mtp-dlg-help" class="mtp-dlg ui-helper-hidden" title="manyMail help">';
 			html += '<p>To send your e-mail, simply:</p>';
-			html +=   '<ul>';
-			html +=     '<li>Enter a relevant subject and message for your e-mail.</li>';
-			html +=     '<li>Check all the people you want to send the e-mail to are in the <strong>To:</strong>, <strong>Cc:</strong> and/or <strong>Bcc:</strong> tabs.</li>';
-			html +=     '<li>If you want someone in the <strong>To:</strong> tab recieve a blind-copy, simply drag \'n\' drop their address onto the <strong>Bcc:</strong> tab</li>';
-			html +=     '<li>If you don\'t want someone to get the e-mail, simply click the little cross at the side of their address.</li>';
-			html +=     '<li>If you make a mistake, simply click the <strong>Reset</strong> button to go back to where you started.</li>';
-			html +=     '<li>When you\'re happy, click <strong>Send</strong>.</li>';
-			html +=     '<li>If you prefer to use your installed e-mail applicatiion, click Outlook (you may not have Outlook, but you get the idea).</li>';
-			html +=   '</ul>';
+			html += '<ul>';
+			html += '<li>Enter a relevant subject and message for your e-mail.</li>';
+			html += '<li>Check all the people you want to send the e-mail to are in the <strong>To:</strong>, <strong>Cc:</strong> and/or <strong>Bcc:</strong> tabs.</li>';
+			html += '<li>If you want someone in the <strong>To:</strong> tab receive a blind-copy, simply drag \'n\' drop their address onto the <strong>Bcc:</strong> tab</li>';
+			html += '<li>If you don\'t want someone to get the e-mail, simply click the little cross at the side of their address.</li>';
+			html += '<li>If you make a mistake, simply click the <strong>Reset</strong> button to go back to where you started.</li>';
+			html += '<li>When you\'re happy, click <strong>Send</strong>.</li>';
+			html += '<li>If you prefer to use your installed e-mail applicatiion, click Outlook (you may not have Outlook, but you get the idea).</li>';
+			html += '</ul>';
 			html += '</div>';
 
 			return html;
@@ -199,46 +199,48 @@
 
 		function openInClientApp(email) {
 			var href = "mailto:" + email.To + "?";
-			
+
 			if (email.Cc)
 				href += "cc=" + email.Cc;
-				
+
 			if (email.Bcc) {
-				if (!isLast(href, "?")) 
-					// evidently there was a CC: component
+				if (!isLast(href, "?"))
+				// evidently there was a CC: component
 					href += "&";
 				href += "bcc=" + email.Bcc;
 			}
-			
+
 			if (email.Subject) {
 				if (!isLast(href, "?"))
-					// evidently there was a CC: or BCC:
+				// evidently there was a CC: or BCC:
 					href += "&";
 				href += "subject=" + email.Subject;
 			}
-			
+
 			if (email.Body) {
 				if (!isLast(href, "?"))
-					// evidently there was a CC:, BCC: or Subject
+				// evidently there was a CC:, BCC: or Subject
 					href += "&";
 				href += "body=" + email.Body;
 			}
-				
+
 			// and fire a new window off so it opens in the client application
 			var winMail = window.open(href, "_blank", "scrollbars=yes,resizable=yes,width=10,height=10");
-			if (winMail)
+			if (winMail) {
+				winMail.opener = null;
 				winMail.close();
-				
+			}
+
 		}; // openInClientApp
-		
+
 		function isLast(inputString, isChar) {
 			if (inputString.length == 0)
 				return false;
-			if (inputString.charAt( inputString.length-1 ) == isChar)
+			if (inputString.charAt(inputString.length - 1) == isChar)
 				return true;
-			else 
+			else
 				return false;
-				
+
 		}; // isLast
 
 
@@ -248,38 +250,38 @@
 			/// </summary>
 			/// <param name="email">Email object to reset the form to</param>
 			/// <returns>No return value</returns>
-			
+
 			$("#" + email.ID)
 					.find("#" + email.SubjectID)
-					.val( email.startingEmail.Subject )
+					.val(email.startingEmail.Subject)
 				.end()
 					.find("#" + email.BodyID)
-					.val( email.startingEmail.Body )
+					.val(email.startingEmail.Body)
 				.end()
 					.find("#" + email.ToListID)
-					// note that jQuery "replaceWith" will remove "#mtp-to-list" as well, which we don't want
+			// note that jQuery "replaceWith" will remove "#mtp-to-list" as well, which we don't want
 					.children()
 					.remove()
 					.end()
-					.append( buildEmailButtonList(email.startingEmail.ToList) )
+					.append(buildEmailButtonList(email.startingEmail.ToList))
 				.end()
 					.find("#" + email.CcListID)
-					// note thast jQuery "replaceWith" will remove "#mtp-cc-list" as well, which we don't want
+			// note thast jQuery "replaceWith" will remove "#mtp-cc-list" as well, which we don't want
 					.children()
 					.remove()
 					.end()
-					.append( buildEmailButtonList(email.startingEmail.CcList) )
+					.append(buildEmailButtonList(email.startingEmail.CcList))
 				.end()
 					.find("#" + email.BccListID)
-					// note that jQuery "replaceWith" will remove "#mtp-bcc-list" as well, which we don't want
+			// note that jQuery "replaceWith" will remove "#mtp-bcc-list" as well, which we don't want
 					.children()
 					.remove()
 					.end()
-					.append( buildEmailButtonList(email.startingEmail.BccList) );
-					
+					.append(buildEmailButtonList(email.startingEmail.BccList));
+
 			// as we've replaced all the html in the To/Cc/Bcc tabs, we have to wire up 
 			// the delete buttons again
-			$(".mtp-button-delete", $("#" + email.TabsID) ).click(
+			$(".mtp-button-delete", $("#" + email.TabsID)).click(
 				function () {
 					$(this).parent().fadeOut();
 				}
@@ -307,9 +309,9 @@
 				// hasn't been created yet, so add it into the DOM so we can report the error
 				var html = "";
 				html += '<div id="' + email.ErrDlgID + '" title="Error" class="ui-helper-hidden mtp-err-dlg">';
-				html +=		'<div id="' + email.ErrMsgID + '">';
-				html +=		errMsg;
-				html +=		'</div>';
+				html += '<div id="' + email.ErrMsgID + '">';
+				html += errMsg;
+				html += '</div>';
 				html += '</div>';
 				$("body").append(html);
 				// read it back as we'll need it in a minute
@@ -324,7 +326,7 @@
 				{
 					modal: true,
 					buttons: {
-						Ok: function() {
+						Ok: function () {
 							$(this).dialog("close");
 						}
 					}
@@ -347,7 +349,7 @@
 			/// </returns>
 
 			if (email == null)
-				// dunno what's happened there!
+			// dunno what's happened there!
 				throw "defaultValidator expected an email object";
 
 			var errMsg = "";
@@ -360,8 +362,8 @@
 				errMsg += "<li>You need to fill in the <strong>body</strong>.</li>";
 
 			if (errMsg != "") {
-				errMsg = 
-					'<p>Sorry, but we couldn\'t send the e-mail:</p>' + 
+				errMsg =
+					'<p>Sorry, but we couldn\'t send the e-mail:</p>' +
 					'<ul>' + errMsg + '</ul>';
 				return errMsg;
 			}
@@ -382,12 +384,12 @@
 			/// </summary>
 			/// <returns>Returns the object version of what's in the dialog</returns>
 
-			email.Subject = $.trim( $("#" + email.SubjectID).val() );
-			email.Body = $.trim( $("#" + email.BodyID).val() );
+			email.Subject = $.trim($("#" + email.SubjectID).val());
+			email.Body = $.trim($("#" + email.BodyID).val());
 
-			email.To = "";   email.ToList = [];
-			email.Cc = "";   email.CcList = [];
-			email.Bcc = "";  email.BccList = [];
+			email.To = ""; email.ToList = [];
+			email.Cc = ""; email.CcList = [];
+			email.Bcc = ""; email.BccList = [];
 
 			// have to work around the fact that :visible (correctly) is dependent
 			// on the parent being visible, which on an in-active tab it will be hidden, 
@@ -397,7 +399,7 @@
 				function (index) {
 					var self = $(this);
 					if (self.css("display") == "none")
-						// item really is hidden, not just the parent, so skip this one
+					// item really is hidden, not just the parent, so skip this one
 						return;
 
 					var distId = self.parent().attr("id");
@@ -405,17 +407,17 @@
 					var recipientSep = recipient + settings.separator;
 
 					// I'm sure there's a better way of doing this ... but hay, it'll do :)
-					if (distId === email.ToListID) 
-						email.ToList.push( recipient );
-					else if (distId === email.CcListID) 
-						email.CcList.push( recipient );
-					else 
-						email.BccList.push( recipient );
+					if (distId === email.ToListID)
+						email.ToList.push(recipient);
+					else if (distId === email.CcListID)
+						email.CcList.push(recipient);
+					else
+						email.BccList.push(recipient);
 
 				} // function
 			); // each
 
-				// and use the lists to create the separated versions
+			// and use the lists to create the separated versions
 			email.To = email.ToList.join(email.settings.separator);
 			email.Cc = email.CcList.join(email.settings.separator);
 			email.Bcc = email.BccList.join(email.settings.separator);
@@ -469,7 +471,7 @@
 			/// <returns>Returns the mailing object extracted from the mailto href</returns>
 			if (alink == null)
 				return;
-			if (alink.attr("tagName").toUpperCase() != "A")
+			if (alink.prop("tagName") && alink.prop("tagName").toUpperCase() != "A")
 				return;
 			if (alink.attr("href") == null)
 				return;
@@ -484,14 +486,14 @@
 
 			var rootID = "mtp-" + _Sequence.toString();
 
-			email.From = email.settings.decode( getParameterByName(href, "from") );
-			email.Reply = email.settings.decode( getParameterByName(href, "reply") );
-			email.To = email.settings.decode( getParameterByName(href, "to") );  
-			email.Cc = email.settings.decode( getParameterByName(href, "cc") );
-			email.Bcc = email.settings.decode( getParameterByName(href, "bcc") );
+			email.From = email.settings.decode(getParameterByName(href, "from"));
+			email.Reply = email.settings.decode(getParameterByName(href, "reply"));
+			email.To = email.settings.decode(getParameterByName(href, "to"));
+			email.Cc = email.settings.decode(getParameterByName(href, "cc"));
+			email.Bcc = email.settings.decode(getParameterByName(href, "bcc"));
 			email.Subject = getParameterByName(href, "subject");
 			email.Body = getParameterByName(href, "body");
-			
+
 			// now we've got the To/Cc/Bcc bits (which CSV lists basically)
 			// ... extract out the components bits into a list)			
 			buildEmailLists(email);
@@ -500,8 +502,8 @@
 		};
 
 		function buildEmailLists(email) {
-			email.ToList  = splitEmail(email.To, email.settings.separator);
-			email.CcList  = splitEmail(email.Cc, email.settings.separator);
+			email.ToList = splitEmail(email.To, email.settings.separator);
+			email.CcList = splitEmail(email.Cc, email.settings.separator);
 			email.BccList = splitEmail(email.Bcc, email.settings.separator);
 
 		}; // buildEmailLists
@@ -523,9 +525,9 @@
 
 			return arrEmails;
 		}
-				
 
-		function buildDialogHtml( email ) {
+
+		function buildDialogHtml(email) {
 			/// <summary>
 			/// Draws the HTML for the e-mail dialog, pre-populating it with the "email" object that's been
 			/// extracted from the "mailto" href.
@@ -538,42 +540,42 @@
 			html += '<div id="' + email.ID + '" class="mtp-dlg ui-helper-hidden" title="' + email.settings.title + '">';
 
 			// header 
-			html +=   '<ol class="mtp-header">';
-			html +=     '<li>';
-			html +=       '<label for="' + email.SubjectID + '" class="mtp-dlg-label">Subject:</label>';
-			html +=       '<input type="text" id="' + email.SubjectID + '" class="ui-corner-all mtp-dlg-text" value="' + email.Subject + '" />';
-			html +=     '</li>';
-			html +=     '<li>';
-			html +=       '<label for="' + email.BodyID + '" class="mtp-dlg-label">Message:</label>';
-			html +=       '<textarea id="' + email.BodyID + '" class="ui-corner-all mtp-dlg-text mtp-dlg-body">' + email.Body + '</textarea>';
-			html +=     '</li>';
-			html +=   '</ol>';
+			html += '<ol class="mtp-header">';
+			html += '<li>';
+			html += '<label for="' + email.SubjectID + '" class="mtp-dlg-label">Subject:</label>';
+			html += '<input type="text" id="' + email.SubjectID + '" class="ui-corner-all mtp-dlg-text" value="' + email.Subject + '" />';
+			html += '</li>';
+			html += '<li>';
+			html += '<label for="' + email.BodyID + '" class="mtp-dlg-label">Message:</label>';
+			html += '<textarea id="' + email.BodyID + '" class="ui-corner-all mtp-dlg-text mtp-dlg-body">' + email.Body + '</textarea>';
+			html += '</li>';
+			html += '</ol>';
 
 			// tabs
-			html +=   '<div id="' + email.TabsID + '" class="mtp-tabs">';
-			html +=     '<ul>';
-			html +=       '<li class="mtp-tab-item"><a href="#' + email.ToID + '">To:</a></li>';
-			html +=       '<li class="mtp-tab-item"><a href="#' + email.CcID + '">Cc:</a></li>';
-			html +=       '<li class="mtp-tab-item"><a href="#' + email.BccID + '">Bcc:</a></li>';
-			html +=     '</ul>';
-			html +=     '<div id="' + email.ToID + '">';
-			html +=       '<ul id="' + email.ToListID + '" class="ui-helper-reset connectedSortable">';
+			html += '<div id="' + email.TabsID + '" class="mtp-tabs">';
+			html += '<ul>';
+			html += '<li class="mtp-tab-item"><a href="#' + email.ToID + '">To:</a></li>';
+			html += '<li class="mtp-tab-item"><a href="#' + email.CcID + '">Cc:</a></li>';
+			html += '<li class="mtp-tab-item"><a href="#' + email.BccID + '">Bcc:</a></li>';
+			html += '</ul>';
+			html += '<div id="' + email.ToID + '">';
+			html += '<ul id="' + email.ToListID + '" class="ui-helper-reset connectedSortable">';
 			html += buildEmailButtonList(email.ToList);
-			html +=       '</ul>';
-			html +=     '</div>';
-			html +=     '<div id="' + email.CcID + '">';
-			html +=       '<ul id="' + email.CcListID + '" class="ui-helper-reset connectedSortable">';
+			html += '</ul>';
+			html += '</div>';
+			html += '<div id="' + email.CcID + '">';
+			html += '<ul id="' + email.CcListID + '" class="ui-helper-reset connectedSortable">';
 			html += buildEmailButtonList(email.CcList);
-			html +=       '</ul>';
-			html +=     '</div>';
-			html +=     '<div id="' + email.BccID + '">';
-			html +=       '<ul id="' + email.BccListID + '" class="ui-helper-reset connectedSortable">';
+			html += '</ul>';
+			html += '</div>';
+			html += '<div id="' + email.BccID + '">';
+			html += '<ul id="' + email.BccListID + '" class="ui-helper-reset connectedSortable">';
 			html += buildEmailButtonList(email.BccList);
-			html +=       '</ul>';
-			html +=     '</div>';
-			html +=   '</div>';
-			html += '</div>';			
-				
+			html += '</ul>';
+			html += '</div>';
+			html += '</div>';
+			html += '</div>';
+
 			return html;
 		};
 
@@ -600,8 +602,8 @@
 			/// <returns>Returns the HTML for drawing an e-mail button</returns>
 
 			var html =
-				'<li class="ui-state-default ui-corner-all mtp-button">' + 
-					emailAddress + 
+				'<li class="ui-state-default ui-corner-all mtp-button">' +
+					emailAddress +
 					'<span class="ui-icon ui-icon-circle-close mtp-button-delete"></span>' +
 				'</li>';
 
@@ -610,7 +612,7 @@
 
 
 		// 
-		function getParameterByName( href, name ) {
+		function getParameterByName(href, name) {
 			/// <summary>
 			/// Extracts a value for a given key in a querystring.
 			/// </summary>
@@ -622,15 +624,15 @@
 			/// http://stackoverflow.com/questions/901115/get-querystring-values-with-jquery
 			/// </remarks>
 
-			name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-			var regexS = "[\\?&]"+name+"=([^&#]*)";
-			var regex = new RegExp( regexS );
-			var results = regex.exec( href );
+			name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+			var regexS = "[\\?&]" + name + "=([^&#]*)";
+			var regex = new RegExp(regexS);
+			var results = regex.exec(href);
 			// window.location.href
 			if (results == null)
 				return "";
 			else
-				return decodeURIComponent(results[1].replace(/\+/g, " "));
+				return decodeURIComponent(results[1]);
 		};
 
 	}; // manyMail
